@@ -19,11 +19,17 @@ The Install script (install.sh) has 4 modes that you can use. to run the script 
 
 
 **Without install script**
+
 `git clone` this repo
+
 `cd Shell-Yeah`
+
 if you have a pre-existing quickshell config, run `mv ~/.config/quickshell ~/.config/quickshell.bak`
+
 `cp -r quickshell ~/.config`
+
 `qs -p ~/.config/quickshell`
+
 **Note:** once the install file is fully built, there will be no need to do this, as the install file will take care of each of these actions.
 **Note 2:** This wont enable every single feature of the shell. (e.g. Dmenu picker wont be available, rofi or another launcher with a dmenu protocol will be needed)
 
