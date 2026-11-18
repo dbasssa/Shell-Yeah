@@ -1,5 +1,7 @@
 # Shell-Yeah
+
 a Quickshell based Desktop shell for Arch & Arch-based distros running MangoWM
+
 ---
 ## Install guide
 The Install script (install.sh) has 4 modes that you can use. to run the script you need to `cd Shell-Yeah` and `chmod +x install.sh`. then run `./install.sh [mode]` or `bash install.sh [mode]`
