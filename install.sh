@@ -39,21 +39,26 @@ OPTIONAL_PKGS=(grim slurp gnome-keyring)
 # ------pacman/aur package detection------
 AUR_HELPER=""
 missing=()
+missing_aur=()
 depcheck() {
   for pkg in "${CORE_PKGS[@]}"; do
-    pacman -Qq "$pkg" &>/dev/null
-    echo -e "\033[1;32mPackage Found:\033[1;0m $pkg" || missing+="$pkg"
+    pacman -Qq "$pkg" || missing+="$pkg"
   done
   for pkgs in "${CORE_AUR_PKGS[@]}"; do
-    pacman -Qq "$pkgs"
-    echo -e "\033[1;32mPackage Found:\033[1;0m $pkgs" || missing+="$pkgs"
+    pacman -Qq "$pkgs" || missing_aur+="$pkgs"
   done
   for pkg1 in "${OPTIONAL_PKGS[@]}"; do
-    pacman -Qq "$pkg1"
-    echo -e "\033[1;32mPackage Found:\033[1;0m $pkg1" || missing+="$pkg1"
+    pacman -Qq "$pkg1" || missing+="$pkg1"
   done
-  if ((${#missing} > 0)); then
-    echo "Missing packages: ${missing[*]}. run 'sudo pacman -S ${missing[*]}' to install."
+  if (( ${#missing} > 0 && ${#missing_aur} > 0 )); then
+    cat <<EOF
+Missing Packages found:
+------pacman------
+${printf '  - s\n' "${missing[@]}"}
+------  AUR  ------
+${printf '  - s\n' "${missing_aur[@]}"}
+If running --check-deps or --custom with manual install, please install these packages. Otherwise, the script will handle the install for you
+EOF
   else
     echo "All packages from pacman have been found. No installs required."
   fi
@@ -71,6 +76,40 @@ detect_aur_helper() {
     echo "No compatible AUR helper found (yay/paru), please use custom install options with manual package install"
   fi
 }
+failed_pkgs=()
+download() {
+  echo "Now running package Install for ${missing[*]}"
+  echo "The please enter your sudo password (This is needed to install the packages):"
+  if ! sudo -v; then
+    echo "Password auth failed. the script will exit now."
+    exit 1
+  fi
+  for pkgs in "${missing[@]}"; do 
+  sudo pacman -S "$pkgs"
+  if [[-z $(pacman -Qq "$pkgs")]]; then 
+    echo -e "\033[1;32mPackage installed:\033[1;0m $pkgs"
+  else
+    echo "Package install failed. Moving to next package."
+  fi
+  done
+  if [[ -n $AUR_HELPER ]]; then 
+  for pkg1 in "${missing_aur[@]}"; do 
+  "$AUR_HELPER" -S "$pkg1"
+  if [[-z $(pacman -Qq "$pkgs")]]; then 
+    echo -e "\033[1;32mPackage installed:\033[1;0m $pkgs"
+  else
+    echo "Package install failed. Moving to next package." && failed_pkgs+=("$pkgs")
+  fi
+  done
+}
+
+
+
+run_auto() {
+    echo "Mode: Auto"
+    echo "The Installer will check dependencies, ask for password, and install shell + packages."
+    run_checkdeps
+  }
 
 # ------custom mode runner------
 run_custom() {
@@ -85,8 +124,8 @@ run_custom() {
 run_checkdeps() {
   echo "mode: check-deps"
   echo "running checks for Core and Optional Packages"
+    detect_aur_helper
   depcheck
-  detect_aur_helper
   echo -e "\033[1;32m-----dependency check done.\033[1;0m you can now use --auto or --custom to fully install Shell-Yeah-----"
 }
 # general ass y/n prompter
@@ -96,7 +135,7 @@ confirm_func() {
     read -r -p "$1 [Y/n]: " answer
     case "${answer}" in
     y | yes | Y | YES | "") return 0 ;;
-    n | no) return 1 ;;
+    n | no | N | NO) return 1 ;;
     *) echo "please type y or n" ;;
     esac
   done
@@ -130,7 +169,7 @@ if [[ $EUID -eq 0 ]]; then
 fi
 
 case "$MODE" in
-auto) echo "mode: auto" ;;
+auto) run_auto ;;
 custom) run_custom ;;
 check-deps) run_checkdeps ;;
 check-integ) echo "mode: check-integ" ;;
