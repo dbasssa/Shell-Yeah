@@ -13,11 +13,36 @@ Singleton {
     property string pending: ""
 
     readonly property var actions: [
-        { id: "lock", label: "Lock screen", icon: "󰌾", needsConfirm: false },
-        { id: "suspend", label: "Suspend", icon: "󰒲", needsConfirm: true },
-        { id: "logout", label: "Log out", icon: "󰗽", needsConfirm: true },
-        { id: "reboot", label: "Reboot", icon: "", needsConfirm: true },
-        { id: "shutdown", label: "Shut down", icon: "󰐥", needsConfirm: true }
+        {
+            id: "lock",
+            label: "Lock screen",
+            icon: "󰌾",
+            needsConfirm: false
+        },
+        {
+            id: "suspend",
+            label: "Suspend",
+            icon: "󰒲",
+            needsConfirm: true
+        },
+        {
+            id: "logout",
+            label: "Log out",
+            icon: "󰗽",
+            needsConfirm: true
+        },
+        {
+            id: "reboot",
+            label: "Reboot",
+            icon: "",
+            needsConfirm: true
+        },
+        {
+            id: "shutdown",
+            label: "Shut down",
+            icon: "󰐥",
+            needsConfirm: true
+        }
     ]
 
     function commandFor(id) {
@@ -29,7 +54,7 @@ Singleton {
         case "logout":
             // logind is the generic path on Arch; killing the compositor is the
             // fallback for sessions where logind is unavailable.
-            return ["sh", "-c", "loginctl terminate-session \"$XDG_SESSION_ID\" 2>/dev/null || pkill -TERM -x mango"];
+            return ["pkill", "-TERM", "-x", "mango"];
         case "reboot":
             return ["systemctl", "reboot"];
         case "shutdown":

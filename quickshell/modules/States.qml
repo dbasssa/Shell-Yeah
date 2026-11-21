@@ -42,6 +42,9 @@ QtObject {
     property bool settingsOpen: false
     //lock screen toggle
     property bool lockScreen: false
+    property bool layoutSwOpen: false
+    property bool layoutBtnShow: StateStore.get("layoutBtnShow", true)
+    onLayoutBtnShowChanged: root.persist("layoutBtnShow")
     //unlock reveal overlay: frozen lock layer with a growing hole (runtime-only)
     property bool unlockRevealOpen: false
     property real unlockOriginX: 0
@@ -76,9 +79,15 @@ QtObject {
     readonly property bool fullBar: root.barStyle !== "notch"
     readonly property bool islandBar: root.barStyle === "island"
     readonly property bool notchBar: root.barStyle === "notch"
-    function fullBarSelect() { root.barStyle = "full" }
-    function islandBarSelect() { root.barStyle = "island" }
-    function notchSelect() { root.barStyle = "notch" }
+    function fullBarSelect() {
+        root.barStyle = "full";
+    }
+    function islandBarSelect() {
+        root.barStyle = "island";
+    }
+    function notchSelect() {
+        root.barStyle = "notch";
+    }
 
     //flatten the bar: drop the outer margin and use the bar background color
     //for every item's card instead of rectcolor. hover color still applies.

@@ -40,6 +40,7 @@ ShellRoot {
     Lockscreen { id: lockscreenController }
     UnlockOverlay { controller: lockscreenController }
     CtrlCenter{}
+    LayoutPanel {}
     ThemeSelector {}
     WallSelector {}
     Clipboard {}

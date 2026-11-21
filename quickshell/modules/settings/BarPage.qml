@@ -107,6 +107,32 @@ Flickable {
             implicitHeight: 70
             color: Theme.bgcolor
             radius: States.itemRounding
+
+            RowLayout {
+                anchors.fill: parent
+                anchors.margins: 10
+                Text {
+                    text: "Show 'Switch Layout' in Workspaces"
+                    color: Theme.text1
+                    font {
+                        family: Theme.fontfamily
+                        pixelSize: Theme.fontxxl
+                    }
+                }
+                Item {
+                    Layout.fillWidth: true
+                }
+                ThemeSwitch {
+                    checked: States.layoutBtnShow
+                    onClicked: States.layoutBtnShow = checked
+                }
+            }
+        }
+        Rectangle {
+            Layout.fillWidth: true
+            implicitHeight: 70
+            color: Theme.bgcolor
+            radius: States.itemRounding
             RowLayout {
                 anchors.fill: parent
                 anchors.margins: 10
@@ -568,7 +594,9 @@ Flickable {
             minimum: 0
             maximum: 200
             suffix: "px"
-            onCommitted: function (v) { States.barMargin = v }
+            onCommitted: function (v) {
+                States.barMargin = v;
+            }
         }
 
         NumberField {
@@ -578,7 +606,9 @@ Flickable {
             minimum: 0
             maximum: 200
             suffix: "px"
-            onCommitted: function (v) { States.notchMargin = v }
+            onCommitted: function (v) {
+                States.notchMargin = v;
+            }
         }
     }
 }

@@ -125,5 +125,29 @@ Rectangle {
                 }
             }
         }
+        Rectangle {
+            visible: States.layoutBtnShow
+            implicitHeight: Math.round(States.barHeight * 0.50)
+            implicitWidth: swText.implicitWidth + 5
+            color: States.flushItems ? (swClick.containsMouse ? Theme.recthovercolor : Theme.bgcolor) : (swClick.containsMouse ? Theme.recthovercolor : Theme.rectcolor)
+
+            Text {
+                id: swText
+                anchors.centerIn: parent
+                color: Theme.text1
+                font {
+                    family: Theme.fontfamily
+                    pixelSize: Theme.fontmd
+                }
+                text: "Switch Layout"
+            }
+
+            MouseArea {
+                id: swClick
+                anchors.fill: parent
+                hoverEnabled: true
+                onClicked: States.layoutSwOpen = !States.layoutSwOpen
+            }
+        }
     }
 }

@@ -133,7 +133,7 @@ PanelWindow {
 
     MouseArea {
         anchors.fill: parent
-        onClicked: root.togglePanel()
+        onClicked: root.closePanel()
     }
 
     IpcHandler {
@@ -148,12 +148,30 @@ PanelWindow {
 
     //tab definitions: the icons fill the panel width evenly
     readonly property var tabs: [
-        { icon: "󰕾", name: "Audio" },
-        { icon: "󱘖", name: "Connections" },
-        { icon: "󰏘", name: "Appearance" },
-        { icon: "󰒓", name: "System" },
-        { icon: "󰐥", name: "Power" },
-        { icon: "󰂚", name: "Notifications" }
+        {
+            icon: "󰕾",
+            name: "Audio"
+        },
+        {
+            icon: "󱘖",
+            name: "Connections"
+        },
+        {
+            icon: "󰏘",
+            name: "Appearance"
+        },
+        {
+            icon: "󰒓",
+            name: "System"
+        },
+        {
+            icon: "󰐥",
+            name: "Power"
+        },
+        {
+            icon: "󰂚",
+            name: "Notifications"
+        }
     ]
 
     Rectangle {

@@ -21,6 +21,12 @@ Singleton {
     property string layout: ""
     property string keymode: ""
 
+    //layouts reported by `mmsg get layouts`, kept as objects so the switcher
+    //can show both the symbol (DW) and the dispatch name (dwindle)
+    property var layouts: []
+    property var layoutNames: []
+    property var layoutSym: []
+
     //monitor name -> tags array from `mmsg watch tags <monitor>`
     property var tagsByMonitor: ({})
 
@@ -38,6 +44,10 @@ Singleton {
             dispatchProc.command = ["mmsg", "dispatch", "view," + tag + ",0"];
         dispatchProc.running = true;
     }
+    function switchLayout(layoutType) {
+        swLayoutProc.command = ["mmsg", "dispatch", "setlayout," + layoutType];
+        swLayoutProc.running = true;
+    }
 
     function parseEvent(data) {
         const line = String(data).trim();
@@ -48,6 +58,46 @@ Singleton {
         } catch (e) {
             return null;
         }
+    }
+    Process {
+        id: layoutsProc
+        command: ["mmsg", "get", "layouts"]
+        running: true
+        stdout: SplitParser {
+            splitMarker: "\n"
+            onRead: data => {
+                const obj = root.parseEvent(data);
+                if (!obj || !Array.isArray(obj.layouts))
+                    return;
+
+                const items = [];
+                const names = [];
+                const symbols = [];
+                for (const item of obj.layouts) {
+                    if (!item || item.name === undefined)
+                        continue;
+                    const name = String(item.name);
+                    const symbol = item.symbol === undefined ? "" : String(item.symbol);
+                    items.push({
+                        name: name,
+                        symbol: symbol
+                    });
+                    names.push(name);
+                    symbols.push(symbol);
+                }
+
+                // Reassign instead of push(): mutating a var array in place does
+                // not reliably emit the change signal QML bindings listen for.
+                root.layouts = items;
+                root.layoutNames = names;
+                root.layoutSym = symbols;
+            }
+        }
+    }
+    Process {
+        id: swLayoutProc
+        command: []
+        running: false
     }
 
     Process {
