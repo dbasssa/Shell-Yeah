@@ -4,6 +4,7 @@ import Quickshell
 import Quickshell.Io
 import Qt.labs.folderlistmodel
 import qs.services
+import qs.modules
 
 Singleton {
     id: root
@@ -42,10 +43,7 @@ Singleton {
     function colorWal(path) {
         //quote the path (wallpapers can contain spaces) and only run the
         //mango hook when install.sh created it
-        pywalProc.command = ["sh", "-c",
-            "command -v wal >/dev/null 2>&1 && wal -i \"$1\" -n -q && { f=\"$HOME/.config/mango/mango-wal.sh\"; "
-            + "[ -f \"$f\" ] && bash \"$f\"; }",
-            "sh", path];
+        pywalProc.command = ["sh", "-c", "command -v wal >/dev/null 2>&1 && wal -i \"$1\" -n -q && { f=\"$HOME/.config/mango/mango-wal.sh\"; " + "[ -f \"$f\" ] && bash \"$f\"; }", "sh", path];
         pywalProc.running = true;
     }
 
@@ -59,8 +57,10 @@ Singleton {
 
         const value = pathOrName.toString();
         root.currentWallpaper = value.startsWith("file:") ? value : root.wallsPath + "/" + value;
-        root.colorWal(value.replace("file://", ""));
         StateStore.set("wallpaper", value.replace("file://", ""));
+        if (States.useWal) {
+            root.colorWal(value.replace("file://", ""));
+        }
     }
 
     function tryPickRandom() {
@@ -122,11 +122,7 @@ Singleton {
     Process {
         id: scanProc
 
-        command: ["sh", "-c",
-            "for d in \"" + root.wallsRoot + "\"/*/; do "
-            + "[ -d \"$d\" ] || continue; "
-            + "n=$(find \"$d\" -maxdepth 1 -type f | grep -icE '\\.(jpe?g|png|webp|bmp)$'); "
-            + "printf '%s %s\\n' \"$(basename \"$d\")\" \"$n\"; done"]
+        command: ["sh", "-c", "for d in \"" + root.wallsRoot + "\"/*/; do " + "[ -d \"$d\" ] || continue; " + "n=$(find \"$d\" -maxdepth 1 -type f | grep -icE '\\.(jpe?g|png|webp|bmp)$'); " + "printf '%s %s\\n' \"$(basename \"$d\")\" \"$n\"; done"]
         running: true
         stdout: StdioCollector {}
 

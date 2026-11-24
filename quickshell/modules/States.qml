@@ -151,4 +151,7 @@ QtObject {
     onBorderOnChanged: root.persist("borderOn")
     property int borderThick: StateStore.get("borderThick", 2)
     onBorderThickChanged: root.persist("borderThick")
+
+    property bool walUse: StateStore.get("walUse", false)
+    onWalUseChanged: root.persist("walUse")
 }

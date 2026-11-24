@@ -212,7 +212,7 @@ Rectangle {
 
                     border {
                         width: 2
-                        color: passwdField.activeFocus ? Theme.textactive : Theme.bordercolor
+                        color: passwdField.activeFocus ? (surface.controller.showFailure ? Theme.alertcolor : Theme.textactive) : (surface.controller.showFailure ? Theme.alertcolor : Theme.bordercolor)
                     }
 
                     TextField {
@@ -372,7 +372,10 @@ Rectangle {
         if (!surface.frozen)
             surface.controller.fieldOriginProvider = () => {
                 const p = fieldBox.mapToItem(surface, fieldBox.width / 2, fieldBox.height / 2);
-                return { x: p.x, y: p.y };
+                return {
+                    x: p.x,
+                    y: p.y
+                };
             };
     }
 }

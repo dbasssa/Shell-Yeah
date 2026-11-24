@@ -15,7 +15,8 @@ Flickable {
     contentHeight: contentCol.implicitHeight + 20
 
     //refresh wallpaper counts when the appearance page is opened
-    onVisibleChanged: if (visible) WallpaperState.rescan()
+    onVisibleChanged: if (visible)
+        WallpaperState.rescan()
 
     //shared by the numeric fields
     function intError(t) {
@@ -151,6 +152,46 @@ Flickable {
         }
 
         Rectangle {
+            Layout.fillWidth: true
+            implicitHeight: 70
+            radius: States.itemRounding
+            color: Theme.bgcolor
+            border {
+                width: States.borderOn ? 1 : 0
+                color: Theme.bordercolor
+            }
+
+            RowLayout {
+                anchors.fill: parent
+                anchors.margins: 10
+                spacing: 10
+
+                Text {
+                    text: "Use Wallpaper for app themes: "
+                    color: Theme.text1
+                    font {
+                        family: Theme.fontfamily
+                        pixelSize: Theme.fontxxl
+                    }
+                }
+                Text {
+                    text: "colors for apps determined by wallpaper, not shell theme"
+                    color: Theme.textmuted
+                    font {
+                        family: Theme.fontfamily
+                        pixelSize: Theme.fontxl
+                    }
+                }
+                Item {
+                    Layout.fillWidth: true
+                }
+                ThemeSwitch {
+                    checked: States.useWal
+                    onClicked: States.useWal = checked
+                }
+            }
+        }
+        Rectangle {
             implicitHeight: 70
             Layout.fillWidth: true
             color: Theme.bgcolor
@@ -282,8 +323,8 @@ Flickable {
                     value: States.fontScale
                     showMarker: true
                     markerValue: 1.0
-                    onMoved: (v) => States.fontScale = v
-                    onCommitted: (v) => States.fontScale = v
+                    onMoved: v => States.fontScale = v
+                    onCommitted: v => States.fontScale = v
                 }
             }
         }
@@ -306,7 +347,9 @@ Flickable {
             minimum: 0
             maximum: 200
             suffix: "px"
-            onCommitted: function (v) { States.panelRounding = v }
+            onCommitted: function (v) {
+                States.panelRounding = v;
+            }
         }
 
         NumberField {
@@ -316,7 +359,9 @@ Flickable {
             minimum: 0
             maximum: 200
             suffix: "px"
-            onCommitted: function (v) { States.itemRounding = v }
+            onCommitted: function (v) {
+                States.itemRounding = v;
+            }
         }
 
         NumberField {
@@ -326,7 +371,9 @@ Flickable {
             minimum: 0
             maximum: 200
             suffix: "px"
-            onCommitted: function (v) { States.tagRounding = v }
+            onCommitted: function (v) {
+                States.tagRounding = v;
+            }
         }
 
         NumberField {
@@ -336,7 +383,9 @@ Flickable {
             minimum: 0
             maximum: 200
             suffix: "px"
-            onCommitted: function (v) { States.sliderRounding = v }
+            onCommitted: function (v) {
+                States.sliderRounding = v;
+            }
         }
     }
 }
