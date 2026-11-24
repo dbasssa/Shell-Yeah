@@ -2,7 +2,7 @@
 
 a Quickshell based Desktop shell for Arch & Arch-based distros running MangoWM
 
----
+
 ## Install guide
 The Install script (install.sh) has 4 modes that you can use. to run the script you need to `cd Shell-Yeah` and `chmod +x install.sh`. then run `./install.sh [mode]` or `bash install.sh [mode]`
 
@@ -33,7 +33,7 @@ if you have a pre-existing quickshell config, run `mv ~/.config/quickshell ~/.co
 **Note:** once the install file is fully built, there will be no need to do this, as the install file will take care of each of these actions.
 **Note 2:** This wont enable every single feature of the shell. (e.g. Dmenu picker wont be available, rofi or another launcher with a dmenu protocol will be needed)
 
----
+
 ## Features
 - Notification handling + Do Not Disturb
 - Screenshots (grim + slurp)
@@ -50,7 +50,7 @@ if you have a pre-existing quickshell config, run `mv ~/.config/quickshell ~/.co
 - App customisation from theme instead of wallpaper (toggle built in, so disabling pywal is possible)
 - GTK and Qt themes (this will probably take a long time because i dont know how to make/choose themes)
 
----
+
 ## IPC Commands
 These are bindable in your config and used to open things like the control center, settings app, clipboard manager, app launcher, etc.
 
