@@ -49,6 +49,7 @@ if you have a pre-existing quickshell config, run `mv ~/.config/quickshell ~/.co
 **Features Currently in Development**
 - App customisation from theme instead of wallpaper (toggle built in, so disabling pywal is possible)
 - GTK and Qt themes (this will probably take a long time because i dont know how to make/choose themes)
+- font customisation (this will also probably take a minute)
 
 
 ## IPC Commands
