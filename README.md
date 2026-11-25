@@ -2,7 +2,7 @@
 
 a Quickshell based Desktop shell for Arch & Arch-based distros running MangoWM
 
----
+
 ## Install guide
 The Install script (install.sh) has 4 modes that you can use. to run the script you need to `cd Shell-Yeah` and `chmod +x install.sh`. then run `./install.sh [mode]` or `bash install.sh [mode]`
 
@@ -33,17 +33,34 @@ if you have a pre-existing quickshell config, run `mv ~/.config/quickshell ~/.co
 **Note:** once the install file is fully built, there will be no need to do this, as the install file will take care of each of these actions.
 **Note 2:** This wont enable every single feature of the shell. (e.g. Dmenu picker wont be available, rofi or another launcher with a dmenu protocol will be needed)
 
----
+
 ## Features
-- pretty much everything something like KDE does (im too tired to list the features right now, updates coming tomorrow)
-- Requests open! submit an issue titled "Feature Request:..." and i will look into it.
----
+- Notification handling + Do Not Disturb
+- Screenshots (grim + slurp)
+- wallpapers + automatic pywal (optional)
+- Fully automated color application to mangowm borders
+- Workspace and Layout management via IPC (mmsg)
+- CLipboard history
+- Quick and easy audio output management
+- Wifi, Ethernet, and Bluetooth management
+- System monitors for RAM and CPU
+- Lock Screen & idle behavior
+
+**Features Currently in Development**
+- App customisation from theme instead of wallpaper (toggle built in, so disabling pywal is possible)
+- GTK and Qt themes (this will probably take a long time because i dont know how to make/choose themes)
+- font customisation (this will also probably take a minute)
+
+
 ## IPC Commands
 These are bindable in your config and used to open things like the control center, settings app, clipboard manager, app launcher, etc.
+
+```
 qs ipc call app-launcher toggle
 qs ipc call ctrlcntr-qs toggle
 spawn,qs ipc call lockscreen-qs toggle
 spawn,qs ipc call clipboard-qs toggle
 spawn,qs ipc call settings-qs toggle
+```
 
 The install script will bind these in your config unless the --no-binds flag is present.  
