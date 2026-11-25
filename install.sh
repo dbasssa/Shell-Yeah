@@ -4,9 +4,6 @@
 MODE=""
 NO_BINDS=0
 
-# ------colors------
-GREEN=$'\033[32m'
-RESET=$'\033[0m'
 
 # ------help menu setup------
 usage() {
@@ -42,19 +39,19 @@ missing=()
 missing_aur=()
 depcheck() {
   for pkg in "${CORE_PKGS[@]}"; do
-    pacman -Qq "$pkg" || missing+="$pkg"
+    pacman -Qq "$pkg" || missing+=("$pkg")
   done
   for pkgs in "${CORE_AUR_PKGS[@]}"; do
-    pacman -Qq "$pkgs" || missing_aur+="$pkgs"
+    pacman -Qq "$pkgs" || missing_aur+=("$pkgs")
   done
   for pkg1 in "${OPTIONAL_PKGS[@]}"; do
-    pacman -Qq "$pkg1" || missing+="$pkg1"
+    pacman -Qq "$pkg1" || missing+=("$pkg1")
   done
   if (( ${#missing} > 0 && ${#missing_aur} > 0 )); then
     cat <<EOF
 Missing Packages found:
 ------pacman------
-${printf '  - s\n' "${missing[@]}"}
+$(printf '  - s\n' "${missing[@]}")
 ------  AUR  ------
 ${printf '  - s\n' "${missing_aur[@]}"}
 If running --check-deps or --custom with manual install, please install these packages. Otherwise, the script will handle the install for you
@@ -86,7 +83,7 @@ download() {
   fi
   for pkgs in "${missing[@]}"; do 
   sudo pacman -S "$pkgs"
-  if [[-z $(pacman -Qq "$pkgs")]]; then 
+  if [[ -z $(pacman -Qq "$pkgs") ]]; then 
     echo -e "\033[1;32mPackage installed:\033[1;0m $pkgs"
   else
     echo "Package install failed. Moving to next package."
@@ -95,12 +92,13 @@ download() {
   if [[ -n $AUR_HELPER ]]; then 
   for pkg1 in "${missing_aur[@]}"; do 
   "$AUR_HELPER" -S "$pkg1"
-  if [[-z $(pacman -Qq "$pkgs")]]; then 
+  done
+  fi
+  if [[ -z $(pacman -Qq "$pkgs") ]]; then 
     echo -e "\033[1;32mPackage installed:\033[1;0m $pkgs"
   else
     echo "Package install failed. Moving to next package." && failed_pkgs+=("$pkgs")
   fi
-  done
 }
 
 
