@@ -1,0 +1,100 @@
+[bind.default]
+# region screenshot (grim + slurp)
+
+"super+shift+t" = "spawn,qs ipc call screenshot-qs region"
+"Print" = "spawn,qs ipc call screenshot-qs region"
+# apps
+"super+t" = "spawn,kitty"
+"super+b" = "spawn,brave-origin"
+"super+y" = "spawn,kitty -e yazi"
+"super+m" = "spawn,spotify"
+
+#shell binds
+"super+d" = "spawn,qs ipc call app-launcher toggle"
+"super+c" = "spawn,qs ipc call ctrlcntr-qs toggle"
+"super+alt+l" = "spawn,qs ipc call lockscreen-qs toggle"
+"super+v" = "spawn,qs ipc call clipboard-qs toggle"
+"super+comma" = "spawn,qs ipc call settings-qs toggle"
+
+#window controls
+"super+q" = "killclient,"
+"super+f" = "togglemaximizescreen"
+"super+shift+f" = "togglefullscreen"
+"super+alt+f" = "togglefakefullscreen"
+#keep window on top,
+"super+g" = "toggleglobal"
+"alt+v" = "togglefloating"
+"super+ctrl+o" = "toggleoverlay"
+"super+i" = "minimized"
+"super+s" = "toggle_scratchpad"
+"alt+Tab" = "toggleoverview"
+"super+r" = "reload_config"
+"super+shift+e" = "quit"
+
+#focus nav binds
+"super+Tab" = "focusstack,next"
+"super+shift+Tab" = "focusstack,prev"
+"super+Left" = "focusdir,left"
+"super+h" = "focusdir,left"
+"super+Right" = "focusdir,right"
+"super+l" = "focusdir,right"
+"super+Up" = "focusdir,up"
+"super+k" = "focusdir,up"
+"super+Down" = "focusdir,down"
+"super+j" = "focusdir,down"
+# move window binds
+"super+shift+Left" = "move_client,left"
+"super+shift+h" = "move_client,left"
+"super+shift+Right" = "move_client ,right"
+"super+shift+l" = "move_client,right"
+"super+shift+Up" = "move_client,up"
+"super+shift+k" = "move_client,up"
+"super+shift+Down" = "move_client,down"
+"super+shift+j" = "move_client,down"
+
+# tag views
+"super+1" = "view,1"
+"super+2" = "view,2"
+"super+3" = "view,3"
+"super+4" = "view,4"
+"super+5" = "view,5"
+"super+6" = "view,6"
+"super+7" = "view,7"
+"super+8" = "view,8"
+"super+9" = "view,9"
+# move window to tag
+"super+shift+1" = "tag,1"
+"super+shift+2" = "tag,2"
+"super+shift+3" = "tag,3"
+"super+shift+4" = "tag,4"
+"super+shift+5" = "tag,5"
+"super+shift+6" = "tag,6"
+"super+shift+7" = "tag,7"
+"super+shift+8" = "tag,8"
+"super+shift+9" = "tag,9"
+
+[mousebind.default]
+
+# Mouse Button Bindings
+# btn_left and btn_right can't bind none mod key
+"SUPER+btn_left" = "moveresize,curmove"
+"super+btn_middle" = "togglemaximizescreen,0"
+"SUPER+btn_right" = "moveresize,curresize"
+
+[axisbind.default]
+
+# Axis Bindings
+"SUPER+UP" = "viewtoleft_have_client"
+"SUPER+DOWN" = "viewtoright_have_client"
+
+[gesturebind.default]
+
+# Gesture Bindings
+"none+left+3" = "focusdir,left"
+"none+right+3" = "focusdir,right"
+"none+up+3" = "focusdir,up"
+"none+down+3" = "focusdir,down"
+"none+right+4" = "viewprev_have_client"
+"none+left+4" = "viewnext_have_client"
+"none+up+4" = "enteroverview"
+"none+down+4" = "leaveoverview"

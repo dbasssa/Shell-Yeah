@@ -1,0 +1,61 @@
+[global]
+source=["./binds.toml","./lookandfeel.toml","./layouts.toml","./inputs.toml","./monitors.toml","./bordercolor.toml"]
+exec_once=["bash ~/.config/mango/autostart.sh"]
+
+# Misc
+no_border_when_single = 0
+axis_bind_apply_timeout = 100
+focus_on_activate = 1
+idle_inhibit_ignore_visible = 0
+idle_inhibit_when_fullscreen = 0
+sloppy_focus = 0
+warp_cursor = 1
+focus_cross_monitor = 0
+focus_direction_only_zone_overlap = 1
+focus_cross_tag = 0
+enable_floating_snap = 0
+snap_distance = 30
+float_full_to_top = 0
+cursor_theme=WhiteSur-cursors
+cursor_size = 10
+drag_tile_to_tile = 1
+drag_tile_small = 1
+mouse_accel_profile=0
+
+# quickshell's Settings window is a regular xdg-toplevel; float it instead of
+# letting the tiling layout swallow it
+[[rule.window_rule]]
+app_id = "org.quickshell"
+title = "^Settings$"
+is_floating = 1
+width = 1200
+height = 800
+
+[[rule.layer_rule]]
+layer_name=quickshell
+no_animation=1
+
+
+[env]
+"QT_QPA_PLATFORM" = "wayland"
+"QT_QPA_PLATFORMTHEME" = "qt6ct"
+"GDK_BACKEND"="wayland,x11"
+"GTK2_RC_FILES"="$HOME/.gtkrc-2.0"
+"NO_AT_BRIDGE"="1"
+
+"ELECTRON_OZONE_PLATFORM_HINT" = "auto"
+"MOZ_ENABLE_WAYLAND"="true"
+"SDL_VIDEODRIVER"="wayland,x11"
+
+
+"LIBVA_DRIVER_NAME"="nvidia"
+"NVD_BACKEND"="direct"
+"__GLX_VENDOR_LIBRARY_NAME"="nvidia"
+
+
+
+"EDITOR"="nvim"
+"VISUAL"="nvim"
+"TERMINAL"="kitty"
+"BROWSER"="brave-origin"
+

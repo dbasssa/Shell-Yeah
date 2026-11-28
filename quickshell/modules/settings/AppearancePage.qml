@@ -387,5 +387,7 @@ Flickable {
                 States.sliderRounding = v;
             }
         }
+
+        AppAppearancePage {}
     }
 }

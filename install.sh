@@ -3,7 +3,7 @@
 # ------argument binds------
 MODE=""
 NO_BINDS=0
-
+installer_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # ------help menu setup------
 usage() {
@@ -38,6 +38,9 @@ AUR_HELPER=""
 missing=()
 missing_aur=()
 depcheck() {
+  echo "----------------------------"
+  echo "Checking dependency installs"
+  echo "----------------------------"
   for pkg in "${CORE_PKGS[@]}"; do
     pacman -Qq "$pkg" || missing+=("$pkg")
   done
@@ -47,13 +50,13 @@ depcheck() {
   for pkg1 in "${OPTIONAL_PKGS[@]}"; do
     pacman -Qq "$pkg1" || missing+=("$pkg1")
   done
-  if (( ${#missing} > 0 && ${#missing_aur} > 0 )); then
+  if ((${#missing[@]} > 0 || ${#missing_aur[@]} > 0)); then
     cat <<EOF
 Missing Packages found:
 ------pacman------
-$(printf '  - s\n' "${missing[@]}")
+$(printf '  - %s\n' "${missing[@]}")
 ------  AUR  ------
-${printf '  - s\n' "${missing_aur[@]}"}
+$(printf '  - %s\n' "${missing_aur[@]}")
 If running --check-deps or --custom with manual install, please install these packages. Otherwise, the script will handle the install for you
 EOF
   else
@@ -61,53 +64,138 @@ EOF
   fi
 
 }
+#-----------Finds AUR helper, prefers paru over yay-------------
 detect_aur_helper() {
   if command -v paru &>/dev/null; then
     AUR_HELPER="paru"
-    echo "AUR helper is $AUR_HELPER"
+    echo "---------------------------"
+    echo -e "AUR helper is \033[1;32m$AUR_HELPER\033[1;0m"
+    echo "---------------------------"
   elif command -v yay &>/dev/null; then
     AUR_HELPER="yay"
-    echo "AUR helper is $AUR_HELPER"
+    echo "---------------------------"
+    echo -e "AUR helper is \033[1;32m$AUR_HELPER\033[1;0m"
+    echo "---------------------------"
   else
     AUR_HELPER=""
     echo "No compatible AUR helper found (yay/paru), please use custom install options with manual package install"
   fi
 }
+
+#--------installer using pacman and detected AUR HElper--------
 failed_pkgs=()
+
 download() {
-  echo "Now running package Install for ${missing[*]}"
-  echo "The please enter your sudo password (This is needed to install the packages):"
+  echo "---------------------------------------------"
+  echo "Now running package Install for ${missing[*]} ${missing_aur[*]}"
+  echo "---------------------------------------------"
+  echo "please enter your sudo password (This is needed to install the packages):"
   if ! sudo -v; then
     echo "Password auth failed. the script will exit now."
     exit 1
   fi
-  for pkgs in "${missing[@]}"; do 
-  sudo pacman -S "$pkgs"
-  if [[ -z $(pacman -Qq "$pkgs") ]]; then 
-    echo -e "\033[1;32mPackage installed:\033[1;0m $pkgs"
+  if ((${#missing[@]} <= 0)); then
+    echo "No missing pacman repo packages, Moving to AUR packages."
   else
-    echo "Package install failed. Moving to next package."
+    for pkgs in "${missing[@]}"; do
+      sudo pacman -S --noconfirm $pkgs
+      if [[ -z $(pacman -Qq "$pkgs") ]]; then
+        echo "Package install failed. Moving to next package." && failed_pkgs+=("$pkgs")
+      else
+        echo -e "\033[1;32mPackage installed:\033[1;0m $pkgs"
+      fi
+    done
   fi
-  done
-  if [[ -n $AUR_HELPER ]]; then 
-  for pkg1 in "${missing_aur[@]}"; do 
-  "$AUR_HELPER" -S "$pkg1"
-  done
-  fi
-  if [[ -z $(pacman -Qq "$pkgs") ]]; then 
-    echo -e "\033[1;32mPackage installed:\033[1;0m $pkgs"
+  if ((${#missing_aur[@]} <= 0)); then
+    echo "No missing AUR packages. If the script didnt find your AUR helper, please use --custom flag with manual install, otherwise, ignore this message"
   else
-    echo "Package install failed. Moving to next package." && failed_pkgs+=("$pkgs")
+    if [[ -n $AUR_HELPER ]]; then
+      for pkg1 in "${missing_aur[@]}"; do
+        "$AUR_HELPER" -S --noconfirm "$pkg1"
+        if [[ -z $(pacman -Qq "$pkg1") ]]; then
+          echo "Package install failed. Moving to next package." && failed_pkgs+=("$pkg1")
+        else
+          echo -e "\033[1;32mPackage installed:\033[1;0m $pkg1"
+        fi
+      done
+    fi
+  fi
+  if ((${#failed_pkgs[@]} > 0)); then
+    echo "These Packages failed to install, please run --custom with manual install and install these beforehand."
+    echo "----------------------------------"
+    echo "${failed_pkgs[@]}"
+    echo "----------------------------------"
   fi
 }
 
+#--------quickshell config writing stuff------------
+target_dir="${XDG_CONFIG_HOME:-$HOME/.config}/quickshell"
 
+qs_conf_backup_or_create() {
+  echo "------------------------------------------------------"
+  echo "Now checking quickshell config files and directories. "
+  echo "------------------------------------------------------"
+  if [[ -d "$target_dir" && -n "$(ls -A "$target_dir")" ]]; then
+    echo "$target_dir exists and has files in it. Moving to a backup; ${target_dir}.bak"
+    cp -r "$target_dir" "${target_dir}.bak"
+    echo "backup created, moving Shell-Yeah files to $target_dir"
+    cp -r "$installer_dir/quickshell" "$target_dir"
+  elif [[ -d "$target_dir" && ! -n "$(ls -A "$target_dir")" ]]; then
+    echo "$target_dir exists, but is empty, removing quickshell dir"
+    rm -rf "$target_dir"
+    echo "Moving Shell-Yeah files into ${target_dir}"
+    cp -r "$installer_dir/quickshell" "$target_dir"
+  else
+    echo "$target_dir does not exist. Creating..."
+    cp -r "$installer_dir/quickshell" "$target_dir"
+  fi
+  if [[ -d "$target_dir" && -n "$(ls -A "$target_dir")" ]]; then
+    echo "Shell-Yeah files copied, run --check-integ after full install completes to verify files."
+  fi
+}
 
+# ------ mango config detection-------------
+mango_dir="${XDG_CONFIG_HOME:-$HOME/.config}/mango"
+mango_conf_file="${XDG_CONFIG_HOME:-$HOME/.config}/mango/config.conf"
+mango_toml_file="${XDG_CONFIG_HOME:-$HOME/.config}/mango/config.toml"
+mango_style=""
+detect_mango_conf() {
+  echo "---------------------------"
+  if [[ -d "$mango_dir" ]]; then
+    echo "Mango directory is $mango_dir"
+    echo "--------------------------------------------"
+    if [[ -f "$mango_conf_file" ]]; then
+      mango_style=".conf"
+      echo "Mango config file type: $mango_style"
+      echo "----------------------------------"
+    elif [[ -f "$mango_toml_file" ]]; then
+      mango_style=".toml"
+      echo "Mango config file type: $mango_style"
+      echo "-----------------------------------"
+    fi
+  else
+    echo "Local mango directory not found, the installer will not create one unless in --auto mode"
+  fi
+}
+
+mango_write_file() {
+  echo "WRITE FILE FUNC"
+}
+
+# ----- auto flag runner using the above functions-----------
 run_auto() {
-    echo "Mode: Auto"
-    echo "The Installer will check dependencies, ask for password, and install shell + packages."
-    run_checkdeps
-  }
+  echo "Mode: Auto"
+  echo "The Installer will check dependencies, ask for password, and install shell + packages."
+  detect_aur_helper
+  depcheck
+  if ((${#missing[@]} > 0 || ${#missing_aur[@]} > 0)); then
+    download
+  fi
+  qs_conf_backup_or_create
+  detect_mango_conf
+  mango_write_file
+
+}
 
 # ------custom mode runner------
 run_custom() {
@@ -122,7 +210,7 @@ run_custom() {
 run_checkdeps() {
   echo "mode: check-deps"
   echo "running checks for Core and Optional Packages"
-    detect_aur_helper
+  detect_aur_helper
   depcheck
   echo -e "\033[1;32m-----dependency check done.\033[1;0m you can now use --auto or --custom to fully install Shell-Yeah-----"
 }
